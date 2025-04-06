@@ -53,61 +53,68 @@ python app.py
 - **Embedding Service**: Generates embeddings using OpenAI's API
 - **Collection Manager**: Manages ChromaDB collections
 
-## Fonctionnalités de filtrage
+## Filtering Capabilities
 
-ChromaDBAdmin propose deux types de filtrage puissants qui correspondent directement aux capacités de requête de ChromaDB :
+ChromaDBAdmin provides powerful filtering options that map directly to ChromaDB's query capabilities:
 
-### Filtrage par métadonnées (JSON)
+### Metadata Filtering
 
-Ce filtrage permet de rechercher des documents selon leurs métadonnées structurées associées :
-
-```json
-{"categorie": "rapport", "auteur": "jean.dupont"}
-```
-
-Cette requête retournera uniquement les documents dont les métadonnées satisfont ces DEUX conditions simultanément.
-
-Vous pouvez utiliser des opérateurs spéciaux pour des requêtes plus complexes :
-
-- Opérateurs de comparaison : `$gt` (supérieur à), `$gte` (supérieur ou égal), `$lt` (inférieur à), `$lte` (inférieur ou égal)
-  ```json
-  {"date": {"$gte": "2023-01-01", "$lt": "2023-02-01"}}
-  ```
-
-- `$ne` (différent de)
-  ```json
-  {"statut": {"$ne": "archivé"}}
-  ```
-
-- `$in` (dans un tableau de valeurs)
-  ```json
-  {"categorie": {"$in": ["actualités", "blog", "article"]}}
-  ```
-
-- `$nin` (pas dans un tableau)
-  ```json
-  {"categorie": {"$nin": ["brouillon", "privé"]}}
-  ```
-
-### Filtrage par contenu de document (JSON)
-
-Ce filtrage recherche directement dans le contenu textuel des documents :
+Metadata filtering allows you to search documents based on their associated structured metadata:
 
 ```json
-{"$contains": "intelligence artificielle"}
+{"category": "report", "author": "john.smith"}
 ```
 
-Cette requête retournera les documents dont le contenu contient l'expression "intelligence artificielle".
+This will return only documents that have BOTH conditions satisfied in their metadata.
 
-Le filtrage par contenu utilise principalement l'opérateur `$contains` qui effectue une recherche de sous-chaîne dans le texte du document. Ceci est utile pour trouver des termes, expressions ou motifs spécifiques indépendamment des métadonnées.
+You can use special operators for more complex queries:
 
-### Cas d'utilisation
+- Comparison operators: `$gt` (greater than), `$gte` (greater than or equal), `$lt` (less than), `$lte` (less than or equal)
+  ```json
+  {"timestamp": {"$gte": "2023-01-01", "$lt": "2023-02-01"}}
+  ```
 
-- **Filtrage par métadonnées** : Idéal pour les données structurées comme les dates, catégories, auteurs, statuts
-- **Filtrage par contenu** : Optimal pour la recherche plein texte, pour trouver des termes ou expressions spécifiques
-- **Filtrage combiné** : Utilisez les deux types pour des requêtes précises nécessitant à la fois des critères de métadonnées et de contenu
+- `$ne` (not equal)
+  ```json
+  {"status": {"$ne": "archived"}}
+  ```
 
-Pour des recherches sémantiques plus complexes, utilisez plutôt la fonction "Recherche sémantique" qui exploite les embeddings pour trouver du contenu sémantiquement similaire plutôt que des correspondances textuelles exactes.
+- `$in` (in array of values)
+  ```json
+  {"category": {"$in": ["news", "blog", "article"]}}
+  ```
+
+- `$nin` (not in array)
+  ```json
+  {"category": {"$nin": ["draft", "private"]}}
+  ```
+
+### Document Content Filtering
+
+Document content filtering searches within the text content of documents:
+
+```json
+{"$contains": "artificial intelligence"}
+```
+
+This will return documents where the content contains the phrase "artificial intelligence".
+
+The document filtering uses the `$contains` operator which performs substring matching within the document text. This is useful for finding specific terms, phrases, or patterns in your document content regardless of metadata.
+
+### Combining Filters
+
+You can use both metadata and document content filters simultaneously for more targeted queries. For example, filtering for documents that:
+- Have "report" as their category (metadata)
+- Were created in January 2023 (metadata)
+- Contain the phrase "quarterly results" (document content)
+
+### Use Cases
+
+- **Metadata filtering**: Best for structured data like dates, categories, authors, status flags
+- **Document content filtering**: Best for full-text search, finding specific terms or phrases
+- **Combined filtering**: Use for precise queries that need both metadata and content criteria
+
+Note that for more complex semantic searches, you should use the "Semantic Search" feature instead, which utilizes embeddings to find semantically similar content rather than exact text matches.
 
 ## API Endpoints
 
