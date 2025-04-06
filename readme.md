@@ -53,6 +53,62 @@ python app.py
 - **Embedding Service**: Generates embeddings using OpenAI's API
 - **Collection Manager**: Manages ChromaDB collections
 
+## Fonctionnalités de filtrage
+
+ChromaDBAdmin propose deux types de filtrage puissants qui correspondent directement aux capacités de requête de ChromaDB :
+
+### Filtrage par métadonnées (JSON)
+
+Ce filtrage permet de rechercher des documents selon leurs métadonnées structurées associées :
+
+```json
+{"categorie": "rapport", "auteur": "jean.dupont"}
+```
+
+Cette requête retournera uniquement les documents dont les métadonnées satisfont ces DEUX conditions simultanément.
+
+Vous pouvez utiliser des opérateurs spéciaux pour des requêtes plus complexes :
+
+- Opérateurs de comparaison : `$gt` (supérieur à), `$gte` (supérieur ou égal), `$lt` (inférieur à), `$lte` (inférieur ou égal)
+  ```json
+  {"date": {"$gte": "2023-01-01", "$lt": "2023-02-01"}}
+  ```
+
+- `$ne` (différent de)
+  ```json
+  {"statut": {"$ne": "archivé"}}
+  ```
+
+- `$in` (dans un tableau de valeurs)
+  ```json
+  {"categorie": {"$in": ["actualités", "blog", "article"]}}
+  ```
+
+- `$nin` (pas dans un tableau)
+  ```json
+  {"categorie": {"$nin": ["brouillon", "privé"]}}
+  ```
+
+### Filtrage par contenu de document (JSON)
+
+Ce filtrage recherche directement dans le contenu textuel des documents :
+
+```json
+{"$contains": "intelligence artificielle"}
+```
+
+Cette requête retournera les documents dont le contenu contient l'expression "intelligence artificielle".
+
+Le filtrage par contenu utilise principalement l'opérateur `$contains` qui effectue une recherche de sous-chaîne dans le texte du document. Ceci est utile pour trouver des termes, expressions ou motifs spécifiques indépendamment des métadonnées.
+
+### Cas d'utilisation
+
+- **Filtrage par métadonnées** : Idéal pour les données structurées comme les dates, catégories, auteurs, statuts
+- **Filtrage par contenu** : Optimal pour la recherche plein texte, pour trouver des termes ou expressions spécifiques
+- **Filtrage combiné** : Utilisez les deux types pour des requêtes précises nécessitant à la fois des critères de métadonnées et de contenu
+
+Pour des recherches sémantiques plus complexes, utilisez plutôt la fonction "Recherche sémantique" qui exploite les embeddings pour trouver du contenu sémantiquement similaire plutôt que des correspondances textuelles exactes.
+
 ## API Endpoints
 
 The application exposes several REST API endpoints that can be used programmatically:
