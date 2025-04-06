@@ -1,4 +1,36 @@
-/* Modal redimensionnable */
+/* Tableau de résultats de recherche */
+#queryResultsTable {
+    table-layout: fixed;         /* Tableau à largeur fixe */
+    width: 100%;
+}
+
+#queryResultsTable th, 
+#queryResultsTable td {
+    word-wrap: break-word;       /* Coupe les mots longs */
+    overflow-wrap: break-word;   /* Alternative pour certains navigateurs */
+    vertical-align: top;         /* Aligne le contenu en haut */
+}
+
+/* Largeurs des colonnes pour le tableau de résultats */
+#queryResultsTable th:nth-child(1),
+#queryResultsTable td:nth-child(1) {
+    width: 10%;                  /* ID: 10% */
+}
+
+#queryResultsTable th:nth-child(2),
+#queryResultsTable td:nth-child(2) {
+    width: 40%;                  /* Document: 40% */
+}
+
+#queryResultsTable th:nth-child(3),
+#queryResultsTable td:nth-child(3) {
+    width: 40%;                  /* Métadonnées: 40% */
+}
+
+#queryResultsTable th:nth-child(4),
+#queryResultsTable td:nth-child(4) {
+    width: 10%;                  /* Distance: 10% */
+}/* Modal redimensionnable */
 .modal-resizable {
     resize: both;
     overflow: auto;

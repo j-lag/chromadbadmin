@@ -51,7 +51,7 @@ def setup():
         collection_manager = CollectionManager(db_manager)
         document_manager = DocumentManager(db_manager)
         init_services()
-        flash('ChromaDB connecté avec succès!', 'success')
+        flash('ChromaDB connected successfully!', 'success')
     except Exception as e:
         flash(f'Erreur lors de la connexion à ChromaDB: {str(e)}', 'danger')
         return redirect(url_for('index'))
