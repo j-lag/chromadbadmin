@@ -33,7 +33,7 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container-fluid mt-4 px-4">
         <div class="row mb-4">
             <div class="col-md-6">
                 <h2>{{ name }}</h2>
@@ -191,7 +191,7 @@
     
     <!-- Modal Recherche Sémantique -->
     <div class="modal fade" id="queryModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-resizable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Recherche sémantique</h5>
@@ -216,12 +216,12 @@
                     <div id="queryResults" class="mt-4 d-none">
                         <h5>Résultats</h5>
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <table class="table table-striped table-hover" id="queryResultsTable">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Document</th>
-                                        <th>Métadonnées</th>
+                                        <th class="resizable">ID<div class="resizer" data-column="0"></div></th>
+                                        <th class="resizable">Document<div class="resizer" data-column="1"></div></th>
+                                        <th class="resizable">Métadonnées<div class="resizer" data-column="2"></div></th>
                                         <th>Distance</th>
                                     </tr>
                                 </thead>
@@ -234,6 +234,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
                     <button type="button" class="btn btn-primary" id="runQueryBtn">Exécuter la recherche</button>
                 </div>
+                <div class="resize-handle"></div>
             </div>
         </div>
     </div>
@@ -491,7 +492,17 @@
                         const row = $("<tr>");
                         
                         row.append($("<td>").text(doc.id));
-                        row.append($("<td>").text(doc.document));
+                        
+                        // Tronquer le document s'il est trop long
+                        const docText = $("<td>");
+                        if (doc.document && doc.document.length > 100) {
+                            docText.html(`<div class="text-truncate">${doc.document.substring(0, 100)}...</div>
+                                        <button class="btn btn-sm btn-link view-full-text-query" data-text="${doc.document.replace(/"/g, '&quot;')}">Voir le texte complet</button>`);
+                        } else {
+                            docText.text(doc.document || "");
+                        }
+                        row.append(docText);
+                        
                         row.append($("<td>").html(`<pre class="metadata-preview">${JSON.stringify(doc.metadata, null, 2)}</pre>`));
                         row.append($("<td>").text(doc.distance ? doc.distance.toFixed(4) : "N/A"));
                         
@@ -500,6 +511,9 @@
                 }
                 
                 $("#queryResults").removeClass("d-none");
+                
+                // Initialiser le redimensionnement des colonnes pour le tableau de résultats
+                initColumnResizing("queryResultsTable");
             }
             
             // Fonction pour mettre à jour l'interface de pagination
@@ -523,77 +537,118 @@
             });
             
             // Redimensionnement des colonnes
-            const table = document.getElementById('documentsTable');
-            const resizers = document.querySelectorAll('#documentsTable th .resizer');
-            let currentResizer;
-            
-            // Largeurs initiales (en pourcentage)
-            const colWidths = [10, 40, 40, 10];
-            
-            // Initialiser les largeurs
-            function setInitialColWidths() {
-                const tableWidth = table.offsetWidth;
-                const ths = table.querySelectorAll('th');
+            function initColumnResizing(tableId) {
+                const table = document.getElementById(tableId);
+                if (!table) return;
                 
-                for (let i = 0; i < colWidths.length; i++) {
-                    if (ths[i]) {
-                        ths[i].style.width = `${colWidths[i]}%`;
+                const resizers = table.querySelectorAll('th .resizer');
+                let currentResizer;
+                
+                // Largeurs initiales (en pourcentage)
+                const colWidths = [10, 40, 40, 10];
+                
+                // Initialiser les largeurs
+                function setInitialColWidths() {
+                    const tableWidth = table.offsetWidth;
+                    const ths = table.querySelectorAll('th');
+                    
+                    for (let i = 0; i < colWidths.length; i++) {
+                        if (ths[i]) {
+                            ths[i].style.width = `${colWidths[i]}%`;
+                        }
                     }
+                }
+                
+                // Appliquer les largeurs initiales
+                setInitialColWidths();
+                
+                // Gérer le redimensionnement
+                for (let i = 0; i < resizers.length; i++) {
+                    const resizer = resizers[i];
+                    
+                    resizer.addEventListener('mousedown', function(e) {
+                        currentResizer = e.target;
+                        const columnIndex = parseInt(currentResizer.getAttribute('data-column'));
+                        const th = currentResizer.parentElement;
+                        const nextTh = th.nextElementSibling;
+                        
+                        // Position initiale
+                        const startPos = e.pageX;
+                        const startWidthCurrent = th.offsetWidth;
+                        const startWidthNext = nextTh ? nextTh.offsetWidth : 0;
+                        
+                        function onMouseMove(e) {
+                            if (currentResizer) {
+                                const diff = e.pageX - startPos;
+                                
+                                // Largeur minimum
+                                const minWidth = 50;
+                                
+                                // Calculer nouvelles largeurs
+                                let newWidthCurrent = Math.max(startWidthCurrent + diff, minWidth);
+                                let newWidthNext = Math.max(startWidthNext - diff, minWidth);
+                                
+                                // Appliquer nouvelles largeurs
+                                if (nextTh && newWidthNext >= minWidth) {
+                                    th.style.width = `${newWidthCurrent}px`;
+                                    nextTh.style.width = `${newWidthNext}px`;
+                                }
+                            }
+                        }
+                        
+                        function onMouseUp() {
+                            currentResizer = null;
+                            document.removeEventListener('mousemove', onMouseMove);
+                            document.removeEventListener('mouseup', onMouseUp);
+                        }
+                        
+                        document.addEventListener('mousemove', onMouseMove);
+                        document.addEventListener('mouseup', onMouseUp);
+                        
+                        e.preventDefault();
+                    });
                 }
             }
             
-            // Appliquer les largeurs initiales au chargement de la page
-            setInitialColWidths();
+            // Initialiser le redimensionnement des colonnes pour le tableau principal
+            initColumnResizing('documentsTable');
             
-            // Recalculer si la fenêtre est redimensionnée
-            window.addEventListener('resize', setInitialColWidths);
+            // Gestion du redimensionnement du modal
+            const queryModal = document.getElementById('queryModal');
+            const resizeHandle = queryModal.querySelector('.resize-handle');
             
-            // Gérer le redimensionnement
-            for (let i = 0; i < resizers.length; i++) {
-                const resizer = resizers[i];
+            resizeHandle.addEventListener('mousedown', function(e) {
+                const modalDialog = queryModal.querySelector('.modal-dialog');
+                const startWidth = modalDialog.offsetWidth;
+                const startHeight = modalDialog.offsetHeight;
+                const startX = e.clientX;
+                const startY = e.clientY;
                 
-                resizer.addEventListener('mousedown', function(e) {
-                    currentResizer = e.target;
-                    const columnIndex = parseInt(currentResizer.getAttribute('data-column'));
-                    const th = currentResizer.parentElement;
-                    const nextTh = th.nextElementSibling;
+                function onMouseMove(e) {
+                    const newWidth = startWidth + (e.clientX - startX);
+                    const newHeight = startHeight + (e.clientY - startY);
                     
-                    // Position initiale
-                    const startPos = e.pageX;
-                    const startWidthCurrent = th.offsetWidth;
-                    const startWidthNext = nextTh ? nextTh.offsetWidth : 0;
-                    
-                    function onMouseMove(e) {
-                        if (currentResizer) {
-                            const diff = e.pageX - startPos;
-                            
-                            // Largeur minimum
-                            const minWidth = 50;
-                            
-                            // Calculer nouvelles largeurs
-                            let newWidthCurrent = Math.max(startWidthCurrent + diff, minWidth);
-                            let newWidthNext = Math.max(startWidthNext - diff, minWidth);
-                            
-                            // Appliquer nouvelles largeurs
-                            if (nextTh && newWidthNext >= minWidth) {
-                                th.style.width = `${newWidthCurrent}px`;
-                                nextTh.style.width = `${newWidthNext}px`;
-                            }
-                        }
-                    }
-                    
-                    function onMouseUp() {
-                        currentResizer = null;
-                        document.removeEventListener('mousemove', onMouseMove);
-                        document.removeEventListener('mouseup', onMouseUp);
-                    }
-                    
-                    document.addEventListener('mousemove', onMouseMove);
-                    document.addEventListener('mouseup', onMouseUp);
-                    
-                    e.preventDefault();
-                });
-            }
+                    modalDialog.style.width = `${newWidth}px`;
+                    modalDialog.style.height = `${newHeight}px`;
+                }
+                
+                function onMouseUp() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                }
+                
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+                
+                e.preventDefault();
+            });
+            
+            // Gérer l'affichage du texte complet pour les résultats de recherche
+            $(document).on("click", ".view-full-text-query", function(e) {
+                e.preventDefault();
+                const text = $(this).data("text");
+                alert(text);
+            });
         });
     </script>
 </body>
