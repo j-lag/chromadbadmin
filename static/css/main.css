@@ -1,0 +1,114 @@
+/* Styles généraux */
+body {
+    background-color: #f8f9fa;
+}
+
+.metadata-preview {
+    font-size: 0.8rem;
+    max-height: 120px;
+    overflow-y: auto;
+    background-color: #f5f5f5;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin: 0;
+    white-space: pre-wrap;       /* Permet le retour à la ligne automatique */
+    word-wrap: break-word;       /* Coupe les mots longs si nécessaire */
+}
+
+/* Tableau de documents */
+#documentsTable {
+    font-size: 0.9rem;
+    table-layout: fixed;         /* Tableau à largeur fixe */
+    width: 100%;
+}
+
+#documentsTable th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#documentsTable th, 
+#documentsTable td {
+    word-wrap: break-word;       /* Coupe les mots longs */
+    overflow-wrap: break-word;   /* Alternative pour certains navigateurs */
+    vertical-align: top;         /* Aligne le contenu en haut */
+}
+
+/* Largeurs des colonnes */
+#documentsTable th:nth-child(1),
+#documentsTable td:nth-child(1) {
+    width: 10%;                  /* ID: 10% */
+}
+
+#documentsTable th:nth-child(2),
+#documentsTable td:nth-child(2) {
+    width: 40%;                  /* Document: 40% */
+}
+
+#documentsTable th:nth-child(3),
+#documentsTable td:nth-child(3) {
+    width: 40%;                  /* Métadonnées: 40% */
+}
+
+#documentsTable th:nth-child(4),
+#documentsTable td:nth-child(4) {
+    width: 10%;                  /* Actions: 10% */
+}
+
+/* Support de redimensionnement des colonnes */
+.resizable {
+    position: relative;
+}
+
+.resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    cursor: col-resize;
+    user-select: none;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.resizer:hover,
+.resizing {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.table-responsive {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+/* Modals */
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Badges et boutons */
+.badge {
+    font-size: 0.9rem;
+    font-weight: normal;
+}
+
+/* Améliorations d'affichage */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.navbar {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+/* Pagination */
+#pagination-info {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+}
