@@ -70,13 +70,13 @@ class DocumentManager:
             ids = [document_id] if document_id else [str(uuid.uuid4())]
             documents = [document]
             metadatas = [metadata] if metadata else None
-            embeddings = [embedding] if embedding else None
+            embeddings = [embedding] if embedding is not None else None
         else:
             # Si on ajoute plusieurs documents
             ids = document_id if document_id else [str(uuid.uuid4()) for _ in document]
             documents = document
             metadatas = metadata if metadata else None
-            embeddings = embedding if embedding else None
+            embeddings = embedding if embedding is not None else None
         
         collection.add(
             documents=documents,
@@ -93,9 +93,9 @@ class DocumentManager:
         
         collection.update(
             ids=[document_id],
-            documents=[document] if document else None,
-            metadatas=[metadata] if metadata else None,
-            embeddings=[embedding] if embedding else None
+            documents=[document] if document is not None else None,
+            metadatas=[metadata] if metadata is not None else None,
+            embeddings=[embedding] if embedding is not None else None
         )
         
         return {"status": "success", "updated": 1}
