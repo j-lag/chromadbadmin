@@ -189,7 +189,8 @@ class DocumentManager:
             return collection.count()
             
         # Sinon, utilisez get() avec des filtres et comptez les résultats
-        get_kwargs = {"include": ["ids"]}
+        # Remarque : "ids" n'est plus une valeur valide pour include, utilisons "metadatas" qui est généralement léger
+        get_kwargs = {"include": ["metadatas"]}
         
         if where is not None:
             get_kwargs["where"] = where
