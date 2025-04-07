@@ -116,6 +116,12 @@ You can use both metadata and document content filters simultaneously for more t
 
 Note that for more complex semantic searches, you should use the "Semantic Search" feature instead, which utilizes embeddings to find semantically similar content rather than exact text matches.
 
+## Screenshots
+
+Here's a preview of the ChromaDBAdmin interface:
+
+![ChromaDBAdmin Collections Interface](pictures/collections.jpg)
+
 ## API Endpoints
 
 The application exposes several REST API endpoints that can be used programmatically:
