@@ -1,5 +1,12 @@
 # ChromaDBAdmin
 
+[![Release](https://img.shields.io/github/v/release/j-lag/chromadbadmin?include_prereleases&sort=semver)](https://github.com/j-lag/chromadbadmin/releases)
+[![License](https://img.shields.io/github/license/j-lag/chromadbadmin)](https://github.com/j-lag/chromadbadmin/blob/main/LICENSE)
+[![Python](https://img.shields.io/badge/python-3.6%2B-blue)](https://www.python.org/downloads/)
+[![Status](https://img.shields.io/badge/status-production-brightgreen)](https://github.com/j-lag/chromadbadmin)
+[![GitHub stars](https://img.shields.io/github/stars/j-lag/chromadbadmin)](https://github.com/j-lag/chromadbadmin/stargazers)
+
+
 ChromaDBAdmin is a comprehensive web-based administration tool for ChromaDB vector databases. It provides an intuitive interface to manage your ChromaDB collections, documents, and embeddings.
 
 ## Features
